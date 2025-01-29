@@ -6,7 +6,6 @@ import bodyParser from 'body-parser';
 import { listUnipileAccounts } from './unipileAccounts.js';
 import { generateUnipileAuthLink } from './AuthWizard.js';
 import { getAllChats, getMessages, sendMessage } from './linkedinMessaging.js';
-import { updateUserUnipileToken } from './lib/user.js'; // Ensure you have this function implemented
 
 const app = express();
 
@@ -83,7 +82,7 @@ app.post('/chats/:chatId/messages', async (req, res) => {
   }
 });
 
-// Handle Unipile Callback (Webhook)
+// Handle Unipile Callback (Webhook) - Simplified Without Database
 app.post('/api/unipile/callback', async (req, res) => {
   try {
     const payload = req.body;
@@ -96,10 +95,15 @@ app.post('/api/unipile/callback', async (req, res) => {
       return res.status(400).json({ error: 'Missing userId or unipileToken' });
     }
 
-    // Update the user's Unipile token in the database
-    await updateUserUnipileToken(userId, unipileToken);
+    // Since there's no database, decide how to handle the token
+    // Options:
+    // 1. Send the token back to the client immediately
+    // 2. Store it in a temporary in-memory store (not recommended for production)
+    // 3. Ignore if not needed
 
-    res.status(200).json({ success: true });
+    // Example: Sending back a success response without storing
+    console.log(`Received Unipile token for userId ${userId}: ${unipileToken}`);
+    res.status(200).json({ success: true, message: 'Token received' });
   } catch (err) {
     console.error('Error handling Unipile callback:', err);
     res.status(500).json({ error: err.message });
