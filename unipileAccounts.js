@@ -6,7 +6,7 @@ const UNIPILE_TOKEN = process.env.UNIPILE_TOKEN;
 
 
 export async function listUnipileAccounts() {
-  const url = 'https://api10.unipile.com:14082/api/v1/accounts';
+  const url = UNIPILE_FULL_DSN;
 
   const response = await fetch(url, {
     method: 'GET',

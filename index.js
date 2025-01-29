@@ -1,4 +1,4 @@
-// index.js
+
 import 'dotenv/config';
 import express from 'express';
 import bodyParser from 'body-parser';
@@ -9,17 +9,12 @@ import { getAllChats, getMessages, sendMessage } from './linkedinMessaging.js';
 
 const app = express();
 
-// Middleware
 app.use(bodyParser.json());
 
-// Health Check Endpoint
 app.get('/health', (req, res) => {
   res.status(200).send('OK');
 });
 
-// API Routes
-
-// Get Unipile Accounts
 app.get('/accounts', async (req, res) => {
   try {
     const accounts = await listUnipileAccounts();
@@ -30,7 +25,7 @@ app.get('/accounts', async (req, res) => {
   }
 });
 
-// Generate LinkedIn Auth Link via Unipile
+
 app.get('/auth/linkedin/generate', async (req, res) => {
   try {
     const data = await generateUnipileAuthLink();
@@ -41,7 +36,7 @@ app.get('/auth/linkedin/generate', async (req, res) => {
   }
 });
 
-// Get All Chats
+
 app.get('/chats', async (req, res) => {
   try {
     const chats = await getAllChats();
@@ -52,7 +47,7 @@ app.get('/chats', async (req, res) => {
   }
 });
 
-// Get Messages for a Specific Chat
+
 app.get('/chats/:chatId/messages', async (req, res) => {
   try {
     const { chatId } = req.params;
@@ -64,7 +59,7 @@ app.get('/chats/:chatId/messages', async (req, res) => {
   }
 });
 
-// Send a Message to a Specific Chat
+
 app.post('/chats/:chatId/messages', async (req, res) => {
   try {
     const { chatId } = req.params;
@@ -82,26 +77,15 @@ app.post('/chats/:chatId/messages', async (req, res) => {
   }
 });
 
-// Handle Unipile Callback (Webhook) - Simplified Without Database
 app.post('/api/unipile/callback', async (req, res) => {
   try {
     const payload = req.body;
 
-    // Extract necessary information from payload
-    // Adjust based on Unipile's actual payload structure
-    const { userId, unipileToken } = payload; // Example fields
-
+    const { userId, unipileToken } = payload;
     if (!userId || !unipileToken) {
       return res.status(400).json({ error: 'Missing userId or unipileToken' });
     }
 
-    // Since there's no database, decide how to handle the token
-    // Options:
-    // 1. Send the token back to the client immediately
-    // 2. Store it in a temporary in-memory store (not recommended for production)
-    // 3. Ignore if not needed
-
-    // Example: Sending back a success response without storing
     console.log(`Received Unipile token for userId ${userId}: ${unipileToken}`);
     res.status(200).json({ success: true, message: 'Token received' });
   } catch (err) {
@@ -110,12 +94,10 @@ app.post('/api/unipile/callback', async (req, res) => {
   }
 });
 
-// Handle Undefined Routes
 app.all('*', (req, res) => {
   res.status(404).json({ error: 'Endpoint not found' });
 });
 
-// Start the Server
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);
